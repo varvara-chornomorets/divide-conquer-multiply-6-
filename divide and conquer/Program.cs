@@ -1,9 +1,12 @@
-﻿BigInteger x = new BigInteger("1313234242425");
+﻿using System.Diagnostics;
+
+BigInteger x = new BigInteger("1313234242425");
 Console.WriteLine(x);
-BigInteger y = new BigInteger("-23") + new BigInteger("95");
+BigInteger y = new BigInteger("123456789") + new BigInteger("987654321");
 Console.WriteLine(y);
-BigInteger z = new BigInteger("2405") - new BigInteger("-280");
+BigInteger z = new BigInteger("87654321") - new BigInteger("12345678");
 Console.WriteLine(z);
+new BigInteger("123").Multiply(new BigInteger("1234"));
 
 
 public class BigInteger
@@ -18,7 +21,7 @@ public class BigInteger
             _isPositive = false;
             value = value.Substring(1);
         }
-
+        
         _numbers = new int[value.Length];
         for (int i = value.Length - 1; i >= 0; i--)
         {
@@ -109,6 +112,39 @@ public class BigInteger
         BigInteger bigIntResult = new BigInteger(string.Join("", result.Reverse()).TrimStart('0'));
         bigIntResult._isPositive = borrow >= 0;
         return bigIntResult;
+    }
+
+    public void MakeTheSameLenght(BigInteger first, BigInteger second)
+    {
+        var max = Math.Max(first._numbers.Length, second._numbers.Length);
+        for (int i = first._numbers.Length; i < max; i++)
+        {
+            // but i cannot append the array
+            first._numbers.Append(0);
+        }
+        for (int i = second._numbers.Length; i < max; i++)
+        {
+            second._numbers.Append(0);
+        }
+        Console.WriteLine($"first number is {first.ToString()} lenght is {first._numbers.Length}, " +
+                          $"second number is {second.ToString()}, lenght is {second._numbers.Length}");
+    }
+
+    public BigInteger Multiply(BigInteger another)
+    {
+        MakeTheSameLenght(this, another);
+        /*
+        1. Take two numbers, find the longer one and make the other one the same length (by adding zeros to the beginning)
+        2. Use karatsuba algorithm for those numbers (m, n):
+        1. If length of the numbers is 1 - multiply it the usual way and return result
+        2. If the length of the numbers is an odd number - add zero in the beginning of each number
+        3. a = m[0, floor(length(m)/2)-1], b = m[floor(length(m)/2), length(m)-1] 
+        4. c = n[0, floor(length(n)/2)-1], d = n[floor(length(n)/2), length(n)-1] 
+        5. x = karatsuba (a+b)*(c+d) (recursive)
+        6. y = karatsuba (a*c) (recursive)
+        7. z = karatsuba (b*d) (recursive)
+        8. return (10^length(m) * y) + (10^floor(length(m)/2) * (x-y-z)) + z*/
+        return new BigInteger("123");
     }
 
 
