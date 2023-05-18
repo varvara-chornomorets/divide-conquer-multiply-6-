@@ -161,30 +161,30 @@ public class BigInteger
         {
             updatedSecondNumbers[i] = 0;
         }
-        Console.WriteLine("FIRST");
-        foreach (var t in first._numbers)
-        {
-            Console.WriteLine(t);
-        }
-        Console.WriteLine("SECOND");
-        foreach (var t in second._numbers)
-        {
-            Console.WriteLine(t);
-        }
+        // Console.WriteLine("FIRST");
+        // foreach (var t in first._numbers)
+        // {
+        //     Console.WriteLine(t);
+        // }
+        // Console.WriteLine("SECOND");
+        // foreach (var t in second._numbers)
+        // {
+        //     Console.WriteLine(t);
+        // }
 
         first._numbers = updatedFirstNumbers;
         second._numbers = updatedSecondNumbers;
-        Console.WriteLine("FIRST");
-        foreach (var t in first._numbers)
-        {
-            Console.WriteLine(t);
-        }
-        Console.WriteLine("SECOND");
-        foreach (var t in second._numbers)
-        {
-            Console.WriteLine(t);
-        }
-        Console.WriteLine($"updated first is {first}, updated second is {second}, max is {max}");
+        // Console.WriteLine("FIRST");
+        // foreach (var t in first._numbers)
+        // {
+        //     Console.WriteLine(t);
+        // }
+        // Console.WriteLine("SECOND");
+        // foreach (var t in second._numbers)
+        // {
+        //     Console.WriteLine(t);
+        // }
+        // Console.WriteLine($"updated first is {first}, updated second is {second}, max is {max}");
         return new[] { first, second };
     }
 
@@ -214,40 +214,43 @@ public class BigInteger
     public BigInteger Karatsuba(BigInteger another)
     {
         // 0. make numbers the same length
-            var sameLength = MakeTheSameLength(this, another);
-            var first = sameLength[0];
-            var second= sameLength[1];
-            return new BigInteger("4");
-            // var length = first.Length;
-            // // 1. If length of the numbers is 1 - multiply it the usual way and return result
-            // if (length == 1)
-            // {
-            //     int numericResult = int.Parse(first) * int.Parse(second);
-            //     var result = numericResult.ToString();
-            //     return result;
-            // }
-            //
-            // if (length % 2 == 1)
-            // {
-            //     first = "0" + first;
-            //     second = "0" + second;
-            //     length += 1;
-            // }
-            //
-            // var a = first[0..(length/2)];
-            // var b = first[(length / 2).. (length)];
-            // var c = second[0..(length / 2)];
-            // var d = second[(length/ 2).. (length)];
-            // var aBigInteger = new BigInteger(a);
-            // var bBigInteger = new BigInteger(b);
-            // var cBigInteger = new BigInteger(c);
-            // var dBigInteger = new BigInteger(d);
-            // var ac = Karatsuba(a, c);
-            // var bd = Karatsuba(b, d);
-            // var aPlusBCPlusD = Karatsuba((aBigInteger+bBigInteger).ToString(), (cBigInteger + dBigInteger).ToString());
-            // // Console.WriteLine($"{ac}, {bd}, {aPlusBCPlusD}");
-            // string finalResult = AddEverythingUp(ac, bd, aPlusBCPlusD, length);
-            // return finalResult;
+        var sameLength = MakeTheSameLength(this, another);
+        var first = sameLength[0];
+        var second= sameLength[1];
+            
+        // check sign
+        bool sign = !((this._isPositive && !another._isPositive) || (!this._isPositive && another._isPositive));
+        
+        var length = first._numbers.Length;
+        if (length == 1)
+        {
+            var firstInt = first._numbers[0];
+            var secondInt = second._numbers[0];
+            return new BigInteger(new[] { firstInt + secondInt }, sign);
+        }
+        
+        // if (length % 2 == 1)
+        // {
+        //     first = "0" + first;
+        //     second = "0" + second;
+        //     length += 1;
+        // }
+        //
+        // var a = first[0..(length/2)];
+        // var b = first[(length / 2).. (length)];
+        // var c = second[0..(length / 2)];
+        // var d = second[(length/ 2).. (length)];
+        // var aBigInteger = new BigInteger(a);
+        // var bBigInteger = new BigInteger(b);
+        // var cBigInteger = new BigInteger(c);
+        // var dBigInteger = new BigInteger(d);
+        // var ac = Karatsuba(a, c);
+        // var bd = Karatsuba(b, d);
+        // var aPlusBCPlusD = Karatsuba((aBigInteger+bBigInteger).ToString(), (cBigInteger + dBigInteger).ToString());
+        // // Console.WriteLine($"{ac}, {bd}, {aPlusBCPlusD}");
+        // string finalResult = AddEverythingUp(ac, bd, aPlusBCPlusD, length);
+        // return finalResult;
+        return new BigInteger("4");
 
     }
 
@@ -259,13 +262,3 @@ public class BigInteger
 }
 
 
-/*
- 0. make numbers the same length
-1. If length of the numbers is 1 - multiply it the usual way and return result
-(2. If the length of the numbers is an odd number - add zero in the beginning of each number)
-3. a = m[0, floor(length(m)/2)-1], b = m[floor(length(m)/2), length(m)-1] 
-4. c = n[0, floor(length(n)/2)-1], d = n[floor(length(n)/2), length(n)-1] 
-5. x = karatsuba (a+b)*(c+d) (recursive)
-6. y = karatsuba (a*c) (recursive)
-7. z = karatsuba (b*d) (recursive)
-8. return (10^length(m) * y) + (10^floor(length(m)/2) * (x-y-z)) + z (not this, lol)*/
