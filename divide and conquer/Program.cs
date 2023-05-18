@@ -7,7 +7,7 @@ BigInteger y = new BigInteger("23456789") + new BigInteger("987654321");
 Console.WriteLine(y);
 BigInteger z = new BigInteger("87654321") - new BigInteger("12345678");
 Console.WriteLine(z);
-BigInteger d = new BigInteger("5347593485435437984739").Multiply(new BigInteger("90782868767967969796799878789789"));
+BigInteger d = new BigInteger("534759348543543734534984739").Multiply(new BigInteger("90782868767967969796799878789789"));
 Console.WriteLine($"d is {d}");
 
 
@@ -67,12 +67,6 @@ public class BigInteger
         }
         else
         {
-            if ((this.ToString() == "0") && (another.ToString() == "0"))
-            {
-                BigInteger bigIntResult0 = new BigInteger("0");
-                return bigIntResult0;
-
-            }
             for (int i = 0; i < result.Length; i++)
             {
                 int sum = carry;
