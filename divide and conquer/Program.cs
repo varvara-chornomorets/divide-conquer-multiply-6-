@@ -7,7 +7,7 @@ BigInteger y = new BigInteger("23456789") + new BigInteger("987654321");
 Console.WriteLine(y);
 BigInteger z = new BigInteger("87654321") - new BigInteger("12345678");
 Console.WriteLine(z);
-BigInteger d = new BigInteger("5347593487984739").Multiply(new BigInteger("90782868767967969796799878789789"));
+BigInteger d = new BigInteger("5347593485435437984739").Multiply(new BigInteger("90782868767967969796799878789789"));
 Console.WriteLine($"d is {d}");
 
 
@@ -81,8 +81,13 @@ public class BigInteger
                 result[i] = sum % 10;
                 carry = sum / 10;
             }
-
-            BigInteger bigIntResult = new BigInteger(string.Join("", result.Reverse()).TrimStart('0'));
+            var ready = string.Join("", result.Reverse()).TrimStart('0');
+            BigInteger bigIntResult = new BigInteger("0");
+            if (ready.Length > 0)
+            {
+                bigIntResult = new BigInteger(ready);
+            }
+             
             bigIntResult._isPositive = _isPositive;
             return bigIntResult;
         }
