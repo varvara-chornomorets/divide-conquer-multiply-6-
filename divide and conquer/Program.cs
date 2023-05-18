@@ -7,7 +7,7 @@ BigInteger y = new BigInteger("23456789") + new BigInteger("987654321");
 Console.WriteLine(y);
 BigInteger z = new BigInteger("87654321") - new BigInteger("12345678");
 Console.WriteLine(z);
-BigInteger d = new BigInteger("534759348543543734534984739").Multiply(new BigInteger("90782868767967969796799878789789"));
+BigInteger d = new BigInteger("-534759348543543734534984739").Multiply(new BigInteger("-90782868767967969796799878789789"));
 Console.WriteLine($"d is {d}");
 
 
@@ -160,7 +160,12 @@ public class BigInteger
         //   2. Use karatsuba algorithm for those numbers (m, n)
         var absoluteResult = Karatsuba(strNumbers[0], strNumbers[1]);
         // 3. return correct number with sign
-        return new BigInteger(absoluteResult);
+        var result = new BigInteger(absoluteResult);
+        if ((this._isPositive && !another._isPositive) || (!this._isPositive && another._isPositive))
+        {
+            result._isPositive = false;
+        }
+        return result;
     }
 
     private string[] MakeTheSameLength(string first, string second)
@@ -239,7 +244,7 @@ private string Karatsuba(string first, string second)
         var ac = Karatsuba(a, c);
         var bd = Karatsuba(b, d);
         var aPlusBCPlusD = Karatsuba((aBigInteger+bBigInteger).ToString(), (cBigInteger + dBigInteger).ToString());
-        Console.WriteLine($"{ac}, {bd}, {aPlusBCPlusD}");
+        // Console.WriteLine($"{ac}, {bd}, {aPlusBCPlusD}");
         string finalResult = AddEverythingUp(ac, bd, aPlusBCPlusD, length);
         return finalResult;
 
