@@ -7,7 +7,7 @@ BigInteger y = new BigInteger("23456789") + new BigInteger("987654321");
 Console.WriteLine(y);
 BigInteger z = new BigInteger("87654321") - new BigInteger("12345678");
 Console.WriteLine(z);
-BigInteger d = new BigInteger("12345").Multiply(new BigInteger("1234" ));
+BigInteger d = new BigInteger("5347593487984739").Multiply(new BigInteger("90782868767967969796799878789789"));
 Console.WriteLine($"d is {d}");
 
 
@@ -67,6 +67,12 @@ public class BigInteger
         }
         else
         {
+            if ((this.ToString() == "0") && (another.ToString() == "0"))
+            {
+                BigInteger bigIntResult0 = new BigInteger("0");
+                return bigIntResult0;
+
+            }
             for (int i = 0; i < result.Length; i++)
             {
                 int sum = carry;
@@ -113,7 +119,15 @@ public class BigInteger
 
         }
 
-        BigInteger bigIntResult = new BigInteger(string.Join("", result.Reverse()).TrimStart('0'));
+        // if ((this.ToString() == "0") && (another.ToString() == "0"))
+        // {
+        //     BigInteger bigIntResult0 = new BigInteger(string.Join("", result.Reverse()));
+        //     return bigIntResult0;
+        // }
+        //string ToCheck = string.Join("", result.Reverse()).TrimStart('0');
+        string ready = string.Join("", result.Reverse()).TrimStart('0');
+        BigInteger bigIntResult = new  BigInteger("0");
+        if (ready.Length>0) bigIntResult= new BigInteger(ready);
         bigIntResult._isPositive = borrow >= 0;
         return bigIntResult;
     }
@@ -167,6 +181,10 @@ public class BigInteger
 
     private string MultiplyBy10InPower(string number, int power)
     {
+        if (number.TrimStart('0') == "")
+        {
+            return "0";
+        }
         for (int i = 0; i < power; i++)
         {
             number += "0";
@@ -179,14 +197,18 @@ public class BigInteger
         BigInteger acTenPowerN = new BigInteger(MultiplyBy10InPower(ac, length));
         var aplusBCplusDminusACminusBD = new BigInteger(aPlusBCPlusD) - new BigInteger(ac) - new BigInteger(bd);
         BigInteger TenPowerN2 = new BigInteger(MultiplyBy10InPower(aplusBCplusDminusACminusBD.ToString(), length / 2));
+        var a = bd;
         BigInteger result  = acTenPowerN + TenPowerN2 + new BigInteger(bd);
         return result.ToString();
     }
 
 private string Karatsuba(string first, string second)
+{
+    if ((first.TrimStart('0') == "") || second.TrimStart('0') == "")
     {
-
-        // 0. make numbers the same length
+        return "0";
+    }
+    // 0. make numbers the same length
         var sameLength = MakeTheSameLength(first, second);
         first = sameLength[0];
         second = sameLength[1];
@@ -198,6 +220,13 @@ private string Karatsuba(string first, string second)
             int numericResult = int.Parse(first) * int.Parse(second);
             var result = numericResult.ToString();
             return result;
+        }
+
+        if (length % 2 == 1)
+        {
+            first = "0" + first;
+            second = "0" + second;
+            length += 1;
         }
 
         var a = first[0..(length/2)];
