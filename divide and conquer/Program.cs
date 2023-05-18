@@ -7,7 +7,7 @@ BigInteger y = new BigInteger("23456789") + new BigInteger("987654321");
 Console.WriteLine(y);
 BigInteger z = new BigInteger("87654321") - new BigInteger("12345678");
 Console.WriteLine(z);
-BigInteger d = new BigInteger("123").Multiply(new BigInteger("1234" ));
+BigInteger d = new BigInteger("12345").Multiply(new BigInteger("1234" ));
 Console.WriteLine($"d is {d}");
 
 
@@ -187,8 +187,9 @@ private string Karatsuba(string first, string second)
     {
 
         // 0. make numbers the same length
-        first = MakeTheSameLength(first, second)[0];
-        second = MakeTheSameLength(first, second)[1];
+        var sameLength = MakeTheSameLength(first, second);
+        first = sameLength[0];
+        second = sameLength[1];
         
         var length = first.Length;
         // 1. If length of the numbers is 1 - multiply it the usual way and return result
