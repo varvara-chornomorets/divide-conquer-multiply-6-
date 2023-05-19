@@ -7,7 +7,7 @@ using Microsoft.VisualBasic.CompilerServices;
 // Console.WriteLine(y);
 BigInteger z = new BigInteger("24") - new BigInteger("0");
 Console.WriteLine(z);
-BigInteger d = new BigInteger("-1758934753489534").Karatsuba(new BigInteger("-123578498578345"));
+BigInteger d = new BigInteger("-1758934753489534") * (new BigInteger("-123578498578345"));
 Console.WriteLine($"d is {d}");
 
 
@@ -278,6 +278,7 @@ public class BigInteger
 
     public static BigInteger operator +(BigInteger a, BigInteger b) => a.Add(b);
     public static BigInteger operator -(BigInteger a, BigInteger b) => a.Sub(b);
+    public static BigInteger operator *(BigInteger a, BigInteger b) => a.Karatsuba(b);
 }
 
 
