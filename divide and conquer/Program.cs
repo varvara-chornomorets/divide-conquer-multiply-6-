@@ -7,7 +7,7 @@ using Microsoft.VisualBasic.CompilerServices;
 // Console.WriteLine(y);
 BigInteger z = new BigInteger("24") - new BigInteger("0");
 Console.WriteLine(z);
-BigInteger d = new BigInteger("0").Karatsuba(new BigInteger("123578498578345"));
+BigInteger d = new BigInteger("-1758934753489534").Karatsuba(new BigInteger("-123578498578345"));
 Console.WriteLine($"d is {d}");
 
 
@@ -227,13 +227,14 @@ public class BigInteger
 
     public BigInteger Karatsuba(BigInteger another)
     {
+        bool sign = !((this._isPositive && !another._isPositive) || (!this._isPositive && another._isPositive));
         // 0. make numbers the same length and remove signs
         var sameLength = MakeTheSameLength(this, another);
         var first = sameLength[0];
         var second= sameLength[1];
             
         // check sign
-        bool sign = !((this._isPositive && !another._isPositive) || (!this._isPositive && another._isPositive));
+       
         
         var length = first._numbers.Length;
         
@@ -270,29 +271,6 @@ public class BigInteger
         result._isPositive = sign;
 
         return result;
-
-        // if (length % 2 == 1)
-        // {
-        //     first = "0" + first;
-        //     second = "0" + second;
-        //     length += 1;
-        // }
-        //
-        // var a = first[0..(length/2)];
-        // var b = first[(length / 2).. (length)];
-        // var c = second[0..(length / 2)];
-        // var d = second[(length/ 2).. (length)];
-        // var aBigInteger = new BigInteger(a);
-        // var bBigInteger = new BigInteger(b);
-        // var cBigInteger = new BigInteger(c);
-        // var dBigInteger = new BigInteger(d);
-        // var ac = Karatsuba(a, c);
-        // var bd = Karatsuba(b, d);
-        // var aPlusBCPlusD = Karatsuba((aBigInteger+bBigInteger).ToString(), (cBigInteger + dBigInteger).ToString());
-        // // Console.WriteLine($"{ac}, {bd}, {aPlusBCPlusD}");
-        // string finalResult = AddEverythingUp(ac, bd, aPlusBCPlusD, length);
-        // return finalResult;
-
     }
 
 
