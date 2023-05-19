@@ -1,10 +1,10 @@
 ﻿using System.Diagnostics;
 using Microsoft.VisualBasic.CompilerServices;
 
-// BigInteger x = new BigInteger("1313234242425");
-// Console.WriteLine(x);
-// BigInteger y = new BigInteger("23456789") + new BigInteger("987654321");
-// Console.WriteLine(y);
+BigInteger x = new BigInteger("1313234242425");
+Console.WriteLine(x);
+BigInteger y = new BigInteger("23456789") + new BigInteger("987654321");
+Console.WriteLine(y);
 BigInteger z = new BigInteger("24") - new BigInteger("0");
 Console.WriteLine(z);
 BigInteger d = new BigInteger("-1758934753489534") * (new BigInteger("-123578498578345"));
@@ -61,14 +61,16 @@ public class BigInteger
         int carry = 0;
         if (!_isPositive && another._isPositive)
         {
-            BigInteger number = new BigInteger(this.ToString().TrimStart('-'));
-            return another.Sub(number);
+            // BigInteger number = new BigInteger(this.ToString().TrimStart('-'));
+            this._isPositive = true;
+            return another.Sub(this);
         }
 
         if (_isPositive && !another._isPositive)
         {
-            BigInteger number = new BigInteger(another.ToString().TrimStart('-'));
-            return this.Sub(number);
+            // BigInteger number = new BigInteger(another.ToString().TrimStart('-'));
+            another._isPositive = true;
+            return this.Sub(another);
         }
         else
         {
@@ -139,7 +141,7 @@ public class BigInteger
 
     private BigInteger[] MakeTheSameLength(BigInteger first, BigInteger second)
     {
-        Console.WriteLine($"first is {first}, second is {second}");
+        // Console.WriteLine($"first is {first}, second is {second}");
         var max = Math.Max(first._numbers.Length, second._numbers.Length);
         int[] updatedFirstNumbers = new int[max];
         int[] updatedSecondNumbers = new int[max];
@@ -186,7 +188,7 @@ public class BigInteger
         // {
         //     Console.WriteLine(t);
         // }
-        Console.WriteLine($"updated first is {first}, updated second is {second}, max is {max}");
+        // Console.WriteLine($"updated first is {first}, updated second is {second}, max is {max}");
         return new[] { first, second };
     }
 
@@ -255,16 +257,12 @@ public class BigInteger
         var x0 = new BigInteger(first._numbers[0..m], true);
         var y1 = new BigInteger(second._numbers[m..], true);
         var y0 = new BigInteger(second._numbers[0..m], true);
-        Console.WriteLine($"x1 is {x1}, x0 is {x0}, y1 is {y1}, y0 is {y0}, m is {m}, length is {length} " +
-                          $"first number is {first}, second number is {second}");
-        Console.WriteLine("------------------------------------");
+        // Console.WriteLine($"x1 is {x1}, x0 is {x0}, y1 is {y1}, y0 is {y0}, m is {m}, length is {length} " +
+                          // $"first number is {first}, second number is {second}");
+        // Console.WriteLine("------------------------------------");
         var z2 = x1.Karatsuba(y1);
         var z0 = x0.Karatsuba(y0);
-        var k = y1 + y0;
-        var h = x1 + x0;
-        var e = h.Karatsuba(k);
-        var t = e - z2;
-        var f = t - z0;
+ 
         var z1 = ((x1 + x0).Karatsuba(y1 + y0) - z2) - z0;
 
         var result = MultiplyBy10InPower(z2, 2*m) + MultiplyBy10InPower(z1, m) + z0;
