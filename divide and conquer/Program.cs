@@ -1,20 +1,20 @@
-﻿using System.Diagnostics;
-using Microsoft.VisualBasic.CompilerServices;
-
-BigInteger x = new BigInteger("1313234242425");
-Console.WriteLine(x);
+﻿BigInteger x1 = new BigInteger();
+Console.WriteLine(x1);
 BigInteger y = new BigInteger("23456789") + new BigInteger("987654321");
 Console.WriteLine(y);
 BigInteger z = new BigInteger("87654321") - new BigInteger("12345678");
 Console.WriteLine(z);
-BigInteger d = new BigInteger("-534759348543543734534984739").Multiply(new BigInteger("-90782868767967969796799878789789"));
+BigInteger d = new BigInteger("-534759348543543734534984739") * (new BigInteger("-90782868767967969796799878789789"));
 Console.WriteLine($"d is {d}");
-
 
 public class BigInteger
 {
     private int[] _numbers;
     private bool _isPositive = true;
+    public BigInteger()
+    {
+        _numbers = new int[1] { 0 };
+    }
 
     public BigInteger(string value)
     {
@@ -41,7 +41,7 @@ public class BigInteger
 
         for (int i = _numbers.Length - 1; i >= 0; i--)
         {
-            result += _numbers[i].ToString();
+            result += _numbers[i];
         }
 
         return result;
@@ -60,7 +60,7 @@ public class BigInteger
             return another.Sub(number);
         }
 
-        if (_isPositive && !another._isPositive)
+        else if (_isPositive && !another._isPositive)
         {
             BigInteger number = new BigInteger(another.ToString().TrimStart('-'));
             return this.Sub(number);
@@ -81,7 +81,7 @@ public class BigInteger
             {
                 bigIntResult = new BigInteger(ready);
             }
-             
+
             bigIntResult._isPositive = _isPositive;
             return bigIntResult;
         }
@@ -118,15 +118,9 @@ public class BigInteger
 
         }
 
-        // if ((this.ToString() == "0") && (another.ToString() == "0"))
-        // {
-        //     BigInteger bigIntResult0 = new BigInteger(string.Join("", result.Reverse()));
-        //     return bigIntResult0;
-        // }
-        //string ToCheck = string.Join("", result.Reverse()).TrimStart('0');
         string ready = string.Join("", result.Reverse()).TrimStart('0');
-        BigInteger bigIntResult = new  BigInteger("0");
-        if (ready.Length>0) bigIntResult= new BigInteger(ready);
+        BigInteger bigIntResult = new BigInteger("0");
+        if (ready.Length > 0) bigIntResult = new BigInteger(ready);
         bigIntResult._isPositive = borrow >= 0;
         return bigIntResult;
     }
@@ -155,11 +149,8 @@ public class BigInteger
 
     public BigInteger Multiply(BigInteger another)
     {
-        // 1. Take two numbers, omit minuses, make them strings
         var strNumbers = MakeStrings(this, another);
-        //   2. Use karatsuba algorithm for those numbers (m, n)
         var absoluteResult = Karatsuba(strNumbers[0], strNumbers[1]);
-        // 3. return correct number with sign
         var result = new BigInteger(absoluteResult);
         if ((this._isPositive && !another._isPositive) || (!this._isPositive && another._isPositive))
         {
@@ -202,21 +193,21 @@ public class BigInteger
         var aplusBCplusDminusACminusBD = new BigInteger(aPlusBCPlusD) - new BigInteger(ac) - new BigInteger(bd);
         BigInteger TenPowerN2 = new BigInteger(MultiplyBy10InPower(aplusBCplusDminusACminusBD.ToString(), length / 2));
         var a = bd;
-        BigInteger result  = acTenPowerN + TenPowerN2 + new BigInteger(bd);
+        BigInteger result = acTenPowerN + TenPowerN2 + new BigInteger(bd);
         return result.ToString();
     }
 
-private string Karatsuba(string first, string second)
-{
-    if ((first.TrimStart('0') == "") || second.TrimStart('0') == "")
+    private string Karatsuba(string first, string second)
     {
-        return "0";
-    }
-    // 0. make numbers the same length
+        if ((first.TrimStart('0') == "") || second.TrimStart('0') == "")
+        {
+            return "0";
+        }
+        // 0. make numbers the same length
         var sameLength = MakeTheSameLength(first, second);
         first = sameLength[0];
         second = sameLength[1];
-        
+
         var length = first.Length;
         // 1. If length of the numbers is 1 - multiply it the usual way and return result
         if (length == 1)
@@ -233,17 +224,17 @@ private string Karatsuba(string first, string second)
             length += 1;
         }
 
-        var a = first[0..(length/2)];
-        var b = first[(length / 2).. (length)];
+        var a = first[0..(length / 2)];
+        var b = first[(length / 2)..(length)];
         var c = second[0..(length / 2)];
-        var d = second[(length/ 2).. (length)];
+        var d = second[(length / 2)..(length)];
         var aBigInteger = new BigInteger(a);
         var bBigInteger = new BigInteger(b);
         var cBigInteger = new BigInteger(c);
         var dBigInteger = new BigInteger(d);
         var ac = Karatsuba(a, c);
         var bd = Karatsuba(b, d);
-        var aPlusBCPlusD = Karatsuba((aBigInteger+bBigInteger).ToString(), (cBigInteger + dBigInteger).ToString());
+        var aPlusBCPlusD = Karatsuba((aBigInteger + bBigInteger).ToString(), (cBigInteger + dBigInteger).ToString());
         // Console.WriteLine($"{ac}, {bd}, {aPlusBCPlusD}");
         string finalResult = AddEverythingUp(ac, bd, aPlusBCPlusD, length);
         return finalResult;
@@ -252,19 +243,7 @@ private string Karatsuba(string first, string second)
 
 
 
-
     public static BigInteger operator +(BigInteger a, BigInteger b) => a.Add(b);
     public static BigInteger operator -(BigInteger a, BigInteger b) => a.Sub(b);
+    public static BigInteger operator *(BigInteger a, BigInteger b) => a.Multiply(b);
 }
-
-
-/*
- 0. make numbers the same length
-1. If length of the numbers is 1 - multiply it the usual way and return result
-(2. If the length of the numbers is an odd number - add zero in the beginning of each number)
-3. a = m[0, floor(length(m)/2)-1], b = m[floor(length(m)/2), length(m)-1] 
-4. c = n[0, floor(length(n)/2)-1], d = n[floor(length(n)/2), length(n)-1] 
-5. x = karatsuba (a+b)*(c+d) (recursive)
-6. y = karatsuba (a*c) (recursive)
-7. z = karatsuba (b*d) (recursive)
-8. return (10^length(m) * y) + (10^floor(length(m)/2) * (x-y-z)) + z (not this, lol)*/
