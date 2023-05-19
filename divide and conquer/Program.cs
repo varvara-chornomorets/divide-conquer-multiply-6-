@@ -1,20 +1,20 @@
-﻿BigInteger x1 = new BigInteger();
-Console.WriteLine(x1);
+﻿using System.Diagnostics;
+using Microsoft.VisualBasic.CompilerServices;
+
+BigInteger x = new BigInteger("1313234242425");
+Console.WriteLine(x);
 BigInteger y = new BigInteger("23456789") + new BigInteger("987654321");
 Console.WriteLine(y);
-BigInteger z = new BigInteger("87654321") - new BigInteger("12345678");
+BigInteger z = new BigInteger("24") - new BigInteger("0");
 Console.WriteLine(z);
-BigInteger d = new BigInteger("-534759348543543734534984739") * (new BigInteger("-90782868767967969796799878789789"));
+BigInteger d = new BigInteger("-1758934753489534") * (new BigInteger("-123578498578345"));
 Console.WriteLine($"d is {d}");
+
 
 public class BigInteger
 {
     private int[] _numbers;
     private bool _isPositive = true;
-    public BigInteger()
-    {
-        _numbers = new int[1] { 0 };
-    }
 
     public BigInteger(string value)
     {
@@ -31,6 +31,11 @@ public class BigInteger
         }
     }
 
+    public BigInteger(int[] numbers, bool isPositive)
+    {
+        _numbers = numbers;
+        _isPositive = _isPositive;
+    }
     public override string ToString()
     {
         string result = "";
@@ -41,7 +46,7 @@ public class BigInteger
 
         for (int i = _numbers.Length - 1; i >= 0; i--)
         {
-            result += _numbers[i];
+            result += _numbers[i].ToString();
         }
 
         return result;
@@ -56,14 +61,16 @@ public class BigInteger
         int carry = 0;
         if (!_isPositive && another._isPositive)
         {
-            BigInteger number = new BigInteger(this.ToString().TrimStart('-'));
-            return another.Sub(number);
+            // BigInteger number = new BigInteger(this.ToString().TrimStart('-'));
+            this._isPositive = true;
+            return another.Sub(this);
         }
 
-        else if (_isPositive && !another._isPositive)
+        if (_isPositive && !another._isPositive)
         {
-            BigInteger number = new BigInteger(another.ToString().TrimStart('-'));
-            return this.Sub(number);
+            // BigInteger number = new BigInteger(another.ToString().TrimStart('-'));
+            another._isPositive = true;
+            return this.Sub(another);
         }
         else
         {
@@ -81,7 +88,7 @@ public class BigInteger
             {
                 bigIntResult = new BigInteger(ready);
             }
-
+             
             bigIntResult._isPositive = _isPositive;
             return bigIntResult;
         }
@@ -118,132 +125,158 @@ public class BigInteger
 
         }
 
+        // if ((this.ToString() == "0") && (another.ToString() == "0"))
+        // {
+        //     BigInteger bigIntResult0 = new BigInteger(string.Join("", result.Reverse()));
+        //     return bigIntResult0;
+        // }
+        //string ToCheck = string.Join("", result.Reverse()).TrimStart('0');
         string ready = string.Join("", result.Reverse()).TrimStart('0');
-        BigInteger bigIntResult = new BigInteger("0");
-        if (ready.Length > 0) bigIntResult = new BigInteger(ready);
+        BigInteger bigIntResult = new  BigInteger("0");
+        if (ready.Length>0) bigIntResult= new BigInteger(ready);
         bigIntResult._isPositive = borrow >= 0;
         return bigIntResult;
     }
 
 
-    private string[] MakeStrings(BigInteger first, BigInteger second)
+    private BigInteger[] MakeTheSameLength(BigInteger first, BigInteger second)
     {
-        var firstStr = first.ToString();
-        var secondStr = second.ToString();
-        if (!first._isPositive)
+        // Console.WriteLine($"first is {first}, second is {second}");
+        var max = Math.Max(first._numbers.Length, second._numbers.Length);
+        int[] updatedFirstNumbers = new int[max];
+        int[] updatedSecondNumbers = new int[max];
+        for (int i = 0; i < first._numbers.Length; i++)
         {
-            firstStr = firstStr[1..];
+            updatedFirstNumbers[i] = first._numbers[i];
         }
 
-        if (!second._isPositive)
+        for (int i = first._numbers.Length; i < max; i++)
         {
-            secondStr = secondStr[1..];
+            updatedFirstNumbers[i] = 0;
+        }
+        for (int i = 0; i < second._numbers.Length; i++)
+        {
+            updatedSecondNumbers[i] = second._numbers[i];
         }
 
-        var result = new string[2];
-
-        result[0] = firstStr;
-        result[1] = secondStr;
-        return result;
-    }
-
-    public BigInteger Multiply(BigInteger another)
-    {
-        var strNumbers = MakeStrings(this, another);
-        var absoluteResult = Karatsuba(strNumbers[0], strNumbers[1]);
-        var result = new BigInteger(absoluteResult);
-        if ((this._isPositive && !another._isPositive) || (!this._isPositive && another._isPositive))
+        for (int i = second._numbers.Length; i < max; i++)
         {
-            result._isPositive = false;
+            updatedSecondNumbers[i] = 0;
         }
-        return result;
-    }
+        // Console.WriteLine("FIRST");
+        // foreach (var t in first._numbers)
+        // {
+        //     Console.WriteLine(t);
+        // }
+        // Console.WriteLine("SECOND");
+        // foreach (var t in second._numbers)
+        // {
+        //     Console.WriteLine(t);
+        // }
 
-    private string[] MakeTheSameLength(string first, string second)
-    {
-        var max = Math.Max(first.Length, second.Length);
-        for (int i = first.Length; i < max; i++)
-        {
-            first = "0" + first;
-        }
-        for (int j = second.Length; j < max; j++)
-        {
-            second = "0" + second;
-        }
-
+        first._numbers = updatedFirstNumbers;
+        first._isPositive = true;
+        second._isPositive = true;
+        second._numbers = updatedSecondNumbers;
+        // Console.WriteLine("FIRST");
+        // foreach (var t in first._numbers)
+        // {
+        //     Console.WriteLine(t);
+        // }
+        // Console.WriteLine("SECOND");
+        // foreach (var t in second._numbers)
+        // {
+        //     Console.WriteLine(t);
+        // }
+        // Console.WriteLine($"updated first is {first}, updated second is {second}, max is {max}");
         return new[] { first, second };
     }
 
-    private string MultiplyBy10InPower(string number, int power)
+    private bool NumberIsZero(BigInteger number)
     {
-        if (number.TrimStart('0') == "")
+        var result = true;
+        foreach (var digit in number._numbers)
         {
-            return "0";
+            if (digit != 0)
+            {
+                result = false;
+            }
         }
+
+        return result;
+    }
+
+    private BigInteger MultiplyBy10InPower(BigInteger number, int power)
+    {
+        if (NumberIsZero(number))
+        {
+            return new BigInteger("0");
+        }
+        var updatedNumbers = new int[number._numbers.Length + power];
         for (int i = 0; i < power; i++)
         {
-            number += "0";
+            updatedNumbers[i] = 0;
         }
 
+        for (int i = power; i < updatedNumbers.Length; i++)
+        {
+            updatedNumbers[i] = number._numbers[i - power];
+        }
+
+        number._numbers = updatedNumbers;
         return number;
     }
-    private string AddEverythingUp(string ac, string bd, string aPlusBCPlusD, int length)
-    {
-        BigInteger acTenPowerN = new BigInteger(MultiplyBy10InPower(ac, length));
-        var aplusBCplusDminusACminusBD = new BigInteger(aPlusBCPlusD) - new BigInteger(ac) - new BigInteger(bd);
-        BigInteger TenPowerN2 = new BigInteger(MultiplyBy10InPower(aplusBCplusDminusACminusBD.ToString(), length / 2));
-        var a = bd;
-        BigInteger result = acTenPowerN + TenPowerN2 + new BigInteger(bd);
-        return result.ToString();
-    }
 
-    private string Karatsuba(string first, string second)
+    public BigInteger Karatsuba(BigInteger another)
     {
-        if ((first.TrimStart('0') == "") || second.TrimStart('0') == "")
-        {
-            return "0";
-        }
-        // 0. make numbers the same length
-        var sameLength = MakeTheSameLength(first, second);
-        first = sameLength[0];
-        second = sameLength[1];
-
-        var length = first.Length;
-        // 1. If length of the numbers is 1 - multiply it the usual way and return result
+        bool sign = !((this._isPositive && !another._isPositive) || (!this._isPositive && another._isPositive));
+        // 0. make numbers the same length and remove signs
+        var sameLength = MakeTheSameLength(this, another);
+        var first = sameLength[0];
+        var second= sameLength[1];
+            
+        // check sign
+       
+        
+        var length = first._numbers.Length;
+        
         if (length == 1)
         {
-            int numericResult = int.Parse(first) * int.Parse(second);
-            var result = numericResult.ToString();
-            return result;
+            var firstInt = first._numbers[0];
+            var secondInt = second._numbers[0];
+            return new BigInteger((firstInt * secondInt).ToString());
         }
 
-        if (length % 2 == 1)
+        if (NumberIsZero(first) || (NumberIsZero(second)))
         {
-            first = "0" + first;
-            second = "0" + second;
-            length += 1;
+            return new BigInteger("0");
         }
+        // choose base, calculate coefficients
+        int m = length / 2;
+        var x1 = new BigInteger(first._numbers[m..], true);
+        var x0 = new BigInteger(first._numbers[0..m], true);
+        var y1 = new BigInteger(second._numbers[m..], true);
+        var y0 = new BigInteger(second._numbers[0..m], true);
+        // Console.WriteLine($"x1 is {x1}, x0 is {x0}, y1 is {y1}, y0 is {y0}, m is {m}, length is {length} " +
+                          // $"first number is {first}, second number is {second}");
+        // Console.WriteLine("------------------------------------");
+        var z2 = x1.Karatsuba(y1);
+        var z0 = x0.Karatsuba(y0);
+ 
+        var z1 = ((x1 + x0).Karatsuba(y1 + y0) - z2) - z0;
 
-        var a = first[0..(length / 2)];
-        var b = first[(length / 2)..(length)];
-        var c = second[0..(length / 2)];
-        var d = second[(length / 2)..(length)];
-        var aBigInteger = new BigInteger(a);
-        var bBigInteger = new BigInteger(b);
-        var cBigInteger = new BigInteger(c);
-        var dBigInteger = new BigInteger(d);
-        var ac = Karatsuba(a, c);
-        var bd = Karatsuba(b, d);
-        var aPlusBCPlusD = Karatsuba((aBigInteger + bBigInteger).ToString(), (cBigInteger + dBigInteger).ToString());
-        // Console.WriteLine($"{ac}, {bd}, {aPlusBCPlusD}");
-        string finalResult = AddEverythingUp(ac, bd, aPlusBCPlusD, length);
-        return finalResult;
+        var result = MultiplyBy10InPower(z2, 2*m) + MultiplyBy10InPower(z1, m) + z0;
+        result._isPositive = sign;
 
+        return result;
     }
+
 
 
 
     public static BigInteger operator +(BigInteger a, BigInteger b) => a.Add(b);
     public static BigInteger operator -(BigInteger a, BigInteger b) => a.Sub(b);
-    public static BigInteger operator *(BigInteger a, BigInteger b) => a.Multiply(b);
+    public static BigInteger operator *(BigInteger a, BigInteger b) => a.Karatsuba(b);
 }
+
+
