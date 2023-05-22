@@ -5,7 +5,7 @@ BigInteger x = new BigInteger("1313234242425");
 Console.WriteLine(x);
 BigInteger y = new BigInteger("23456789") + new BigInteger("987654321");
 Console.WriteLine(y);
-BigInteger z = new BigInteger("24") - new BigInteger("0");
+BigInteger z = new BigInteger("13") - new BigInteger("14");
 Console.WriteLine(z);
 BigInteger d = new BigInteger("-1758934753489534") * (new BigInteger("-123578498578345"));
 Console.WriteLine($"d is {d}");
@@ -15,12 +15,14 @@ public class BigInteger
 {
     private int[] _numbers;
     private bool _isPositive = true;
+    private bool _isLarger = false;
 
     public BigInteger(string value)
     {
         if (value[0] == '-')
         {
             _isPositive = false;
+            _isLarger = false;
             value = value.Substring(1);
         }
 
@@ -61,14 +63,12 @@ public class BigInteger
         int carry = 0;
         if (!_isPositive && another._isPositive)
         {
-            // BigInteger number = new BigInteger(this.ToString().TrimStart('-'));
             this._isPositive = true;
             return another.Sub(this);
         }
 
         if (_isPositive && !another._isPositive)
         {
-            // BigInteger number = new BigInteger(another.ToString().TrimStart('-'));
             another._isPositive = true;
             return this.Sub(another);
         }
@@ -108,6 +108,21 @@ public class BigInteger
             return this.Add(number);
         }
 
+        if (a.Length < b.Length)
+        {
+            this._isLarger = true;
+            BigInteger number = another - this;
+            number._isPositive = false;
+            return number;
+        }
+        else if ((a[0] < b[0]) && !(_isLarger))
+        {
+            this._isLarger = true;
+            another._isLarger = true;
+            BigInteger number = another - this;
+            number._isPositive = false;
+            return number;
+        }
         for (int i = 0; i < result.Length; i++)
         {
             int diff = borrow;
@@ -124,13 +139,6 @@ public class BigInteger
             }
 
         }
-
-        // if ((this.ToString() == "0") && (another.ToString() == "0"))
-        // {
-        //     BigInteger bigIntResult0 = new BigInteger(string.Join("", result.Reverse()));
-        //     return bigIntResult0;
-        // }
-        //string ToCheck = string.Join("", result.Reverse()).TrimStart('0');
         string ready = string.Join("", result.Reverse()).TrimStart('0');
         BigInteger bigIntResult = new  BigInteger("0");
         if (ready.Length>0) bigIntResult= new BigInteger(ready);
