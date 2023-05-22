@@ -4,6 +4,7 @@ public class BigInteger
 {
     private int[] _numbers;
     private bool _isPositive = true;
+    private bool _isLarger = false;
 
     public BigInteger(string value)
     {
@@ -11,6 +12,7 @@ public class BigInteger
         {
             _isPositive = false;
             value = value.Substring(1);
+            _isLarger = false;
         }
 
         _numbers = new int[value.Length];
@@ -83,7 +85,6 @@ public class BigInteger
         }
     }
 
-
     public BigInteger Sub(BigInteger another)
     {
         int[] a = _numbers;
@@ -97,6 +98,21 @@ public class BigInteger
             return this.Add(number);
         }
 
+        if (a.Length < b.Length)
+        {
+            this._isLarger = true;
+            BigInteger number = another - this;
+            number._isPositive = false;
+            return number;
+        }
+        else if ((a[0] < b[0]) && !(_isLarger))
+        {
+            this._isLarger = true;
+            another._isLarger = true;
+            BigInteger number = another - this;
+            number._isPositive = false;
+            return number;
+        }
         for (int i = 0; i < result.Length; i++)
         {
             int diff = borrow;
@@ -113,13 +129,6 @@ public class BigInteger
             }
 
         }
-
-        // if ((this.ToString() == "0") && (another.ToString() == "0"))
-        // {
-        //     BigInteger bigIntResult0 = new BigInteger(string.Join("", result.Reverse()));
-        //     return bigIntResult0;
-        // }
-        //string ToCheck = string.Join("", result.Reverse()).TrimStart('0');
         string ready = string.Join("", result.Reverse()).TrimStart('0');
         BigInteger bigIntResult = new  BigInteger("0");
         if (ready.Length>0) bigIntResult= new BigInteger(ready);

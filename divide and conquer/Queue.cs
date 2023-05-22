@@ -3,7 +3,7 @@
 public class Queue
 {
     private int _pointer = 0;
-    private static int _capacity = 50;
+    private static int _capacity = 200;
     private string[] _array = new string[_capacity];
 
     public void Enque(string value)
