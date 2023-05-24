@@ -1,4 +1,6 @@
-﻿using divide_and_conquer;
+﻿using System.Numerics;
+using divide_and_conquer;
+using BigInteger = divide_and_conquer.BigInteger;
 
 bool IsOperator(char s)
 {
@@ -75,6 +77,22 @@ ArrayList Tokenize()
     return tokens;
 }
 
+bool IsNumber(string element)
+{
+    foreach (var symbol in element)
+    {
+        if (Char.IsDigit(symbol))
+        {
+            continue;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    return true;
+}
 ArrayList Postfix(ArrayList tokens)
 {
     var operators = new Stack();
@@ -83,7 +101,7 @@ ArrayList Postfix(ArrayList tokens)
     {
         string currentElement = tokens.GetElement(i);
         // if number
-        if (int.TryParse(currentElement, out int n))
+        if (IsNumber(currentElement))
         {
             output.Add(currentElement);
         }

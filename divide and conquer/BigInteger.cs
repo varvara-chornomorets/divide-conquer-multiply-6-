@@ -262,6 +262,9 @@ public class BigInteger
         var z0 = x0.Karatsuba(y0);
  
         var z1 = ((x1 + x0).Karatsuba(y1 + y0) - z2) - z0;
+        var k = (x1 + x0).Karatsuba(y1 + y0);
+        var k2 = k - z2;
+        var k3 = k2 - z0;
 
         var result = MultiplyBy10InPower(z2, 2*m) + MultiplyBy10InPower(z1, m) + z0;
         result._isPositive = sign;
