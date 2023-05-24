@@ -5,7 +5,7 @@ BigInteger x = new BigInteger("1313234242425");
 Console.WriteLine(x);
 BigInteger y = new BigInteger("23456789") + new BigInteger("987654321");
 Console.WriteLine(y);
-BigInteger z = new BigInteger("100") - new BigInteger("70");
+BigInteger z = new BigInteger("5") - new BigInteger("2");
 Console.WriteLine(z);
 BigInteger d = new BigInteger("-1758934753489534") * (new BigInteger("-123578498578345"));
 Console.WriteLine($"d is {d}");
@@ -36,7 +36,7 @@ public class BigInteger
     public BigInteger(int[] numbers, bool isPositive)
     {
         _numbers = numbers;
-        _isPositive = _isPositive;
+        _isPositive = isPositive;
     }
     public override string ToString()
     {
@@ -88,7 +88,7 @@ public class BigInteger
             {
                 bigIntResult = new BigInteger(ready);
             }
-             
+
             bigIntResult._isPositive = _isPositive;
             return bigIntResult;
         }
@@ -107,22 +107,26 @@ public class BigInteger
             BigInteger number = new BigInteger(another.ToString().TrimStart('-'));
             return this.Add(number);
         }
+        else if (!_isPositive && another._isPositive)
+        {
+            BigInteger number = new BigInteger(this.ToString().TrimStart('-'));
+            BigInteger sum = number.Add(another);
+            sum._isPositive = false;
+            return sum;
+        }
+        else if (!_isPositive && !another._isPositive)
+        {
+            BigInteger number = new BigInteger(another.ToString().TrimStart('-'));
+            BigInteger this_number = new BigInteger(this.ToString().TrimStart('-'));
+            return number.Sub(this_number);
+        }
+        else if (IsSmaller(a, b))
+        {
+            BigInteger number = another.Sub(this);
+            number._isPositive = false;
+            return number;
+        }
 
-        if (a.Length < b.Length)
-        {
-            this._isLarger = true;
-            BigInteger number = another - this;
-            number._isPositive = false;
-            return number;
-        }
-        else if ((a[0] <= b[0]) && !(_isLarger) && (a.Length == b.Length))
-        {
-            this._isLarger = true;
-            another._isLarger = true;
-            BigInteger number = another - this;
-            number._isPositive = false;
-            return number;
-        }
         for (int i = 0; i < result.Length; i++)
         {
             int diff = borrow;
@@ -140,11 +144,25 @@ public class BigInteger
 
         }
         string ready = string.Join("", result.Reverse()).TrimStart('0');
-        BigInteger bigIntResult = new  BigInteger("0");
-        if (ready.Length>0) bigIntResult= new BigInteger(ready);
+        BigInteger bigIntResult = new BigInteger("0");
+        if (ready.Length > 0) bigIntResult = new BigInteger(ready);
         bigIntResult._isPositive = borrow >= 0;
         return bigIntResult;
     }
+
+    private bool IsSmaller(int[] a, int[] b)
+    {
+        if (a.Length < b.Length) return true;
+        if (a.Length > b.Length) return false;
+
+        for (int i = a.Length - 1; i >= 0; i--)
+        {
+            if (a[i] < b[i]) return true;
+            if (a[i] > b[i]) return false;
+        }
+        return false;
+    }
+
 
 
     private BigInteger[] MakeTheSameLength(BigInteger first, BigInteger second)
@@ -241,13 +259,13 @@ public class BigInteger
         // 0. make numbers the same length and remove signs
         var sameLength = MakeTheSameLength(this, another);
         var first = sameLength[0];
-        var second= sameLength[1];
-            
+        var second = sameLength[1];
+
         // check sign
-       
-        
+
+
         var length = first._numbers.Length;
-        
+
         if (length == 1)
         {
             var firstInt = first._numbers[0];
@@ -266,14 +284,14 @@ public class BigInteger
         var y1 = new BigInteger(second._numbers[m..], true);
         var y0 = new BigInteger(second._numbers[0..m], true);
         // Console.WriteLine($"x1 is {x1}, x0 is {x0}, y1 is {y1}, y0 is {y0}, m is {m}, length is {length} " +
-                          // $"first number is {first}, second number is {second}");
+        // $"first number is {first}, second number is {second}");
         // Console.WriteLine("------------------------------------");
         var z2 = x1.Karatsuba(y1);
         var z0 = x0.Karatsuba(y0);
- 
+
         var z1 = ((x1 + x0).Karatsuba(y1 + y0) - z2) - z0;
 
-        var result = MultiplyBy10InPower(z2, 2*m) + MultiplyBy10InPower(z1, m) + z0;
+        var result = MultiplyBy10InPower(z2, 2 * m) + MultiplyBy10InPower(z1, m) + z0;
         result._isPositive = sign;
 
         return result;
