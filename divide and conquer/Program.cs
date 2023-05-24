@@ -5,7 +5,7 @@ BigInteger x = new BigInteger("1313234242425");
 Console.WriteLine(x);
 BigInteger y = new BigInteger("23456789") + new BigInteger("987654321");
 Console.WriteLine(y);
-BigInteger z = new BigInteger("13") - new BigInteger("14");
+BigInteger z = new BigInteger("100") - new BigInteger("70");
 Console.WriteLine(z);
 BigInteger d = new BigInteger("-1758934753489534") * (new BigInteger("-123578498578345"));
 Console.WriteLine($"d is {d}");
@@ -115,7 +115,7 @@ public class BigInteger
             number._isPositive = false;
             return number;
         }
-        else if ((a[0] < b[0]) && !(_isLarger))
+        else if ((a[0] <= b[0]) && !(_isLarger) && (a.Length == b.Length))
         {
             this._isLarger = true;
             another._isLarger = true;
