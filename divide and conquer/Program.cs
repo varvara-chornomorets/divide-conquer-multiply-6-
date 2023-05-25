@@ -200,7 +200,7 @@ string Count(ArrayList tokens)
     for (int i = 0; i < tokens.GetLenght(); i++)
     {
         string currentElement = tokens.GetElement(i);
-        if (int.TryParse(currentElement, out _))
+        if (IsNumber(currentElement))
         {
             s.Push(currentElement);
         }

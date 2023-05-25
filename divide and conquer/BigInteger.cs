@@ -97,22 +97,26 @@ public class BigInteger
             BigInteger number = new BigInteger(another.ToString().TrimStart('-'));
             return this.Add(number);
         }
+        else if (!_isPositive && another._isPositive)
+        {
+            BigInteger number = new BigInteger(this.ToString().TrimStart('-'));
+            BigInteger sum = number.Add(another);
+            sum._isPositive = false;
+            return sum;
+        }
+        else if (!_isPositive && !another._isPositive)
+        {
+            BigInteger number = new BigInteger(another.ToString().TrimStart('-'));
+            BigInteger this_number = new BigInteger(this.ToString().TrimStart('-'));
+            return number.Sub(this_number);
+        }
+        else if (IsSmaller(a, b))
+        {
+            BigInteger number = another.Sub(this);
+            number._isPositive = false;
+            return number;
+        }
 
-        if (a.Length < b.Length)
-        {
-            this._isLarger = true;
-            BigInteger number = another - this;
-            number._isPositive = false;
-            return number;
-        }
-        else if ((a[0] < b[0]) && !(_isLarger))
-        {
-            this._isLarger = true;
-            another._isLarger = true;
-            BigInteger number = another - this;
-            number._isPositive = false;
-            return number;
-        }
         for (int i = 0; i < result.Length; i++)
         {
             int diff = borrow;
@@ -130,10 +134,23 @@ public class BigInteger
 
         }
         string ready = string.Join("", result.Reverse()).TrimStart('0');
-        BigInteger bigIntResult = new  BigInteger("0");
-        if (ready.Length>0) bigIntResult= new BigInteger(ready);
+        BigInteger bigIntResult = new BigInteger("0");
+        if (ready.Length > 0) bigIntResult = new BigInteger(ready);
         bigIntResult._isPositive = borrow >= 0;
         return bigIntResult;
+    }
+
+    private bool IsSmaller(int[] a, int[] b)
+    {
+        if (a.Length < b.Length) return true;
+        if (a.Length > b.Length) return false;
+
+        for (int i = a.Length - 1; i >= 0; i--)
+        {
+            if (a[i] < b[i]) return true;
+            if (a[i] > b[i]) return false;
+        }
+        return false;
     }
 
 
